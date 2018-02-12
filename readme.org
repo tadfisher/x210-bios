@@ -1,0 +1,259 @@
+* ThinkPad X210 BIOS debugging
+
+This is a collection of notes, log dumps, and attempts to fix some issues with
+the BIOS of the ThinkPad X210 laptop from 51nb.
+
+The X210 is a custom 8th-generation Intel Core mobile platform (Kaby Lake-R)
+installed in an original X200 or X201 chassis. More information can be found at:
+
+- [[https://forum.51nb.com/forum.php?mod=forumdisplay&fid=117&page=1][51nb.com forums]] (Chinese-language)
+- [[https://www.facebook.com/lcdfans/][Facebook: lcdfans]]
+- [[https://forum.thinkpads.com/viewforum.php?f=80][ThinkPads.com forum]]
+
+* This repo
+
+| ~fwts~ | Dumps and other info provided by the [[https://wiki.ubuntu.com/FirmwareTestSuite][Firmware Test Suite]] |
+
+* Issues
+
+** ACPI errors
+*** Namespace lookups
+ [    0.048306] ACPI Error: [_SB_.PCI0.RP05.PXSX] Namespace lookup failure, AE_NOT_FOUND (20170831/dswload2-191)
+ [    0.048680] ACPI Exception: AE_NOT_FOUND, During name lookup/catalog (20170831/psobject-252)
+ [    0.049003] ACPI Error: Method parse/execution failed \_SB.PCI0.RP04.PXSX, AE_NOT_FOUND (20170831/psparse-550)
+ [    0.049750] ACPI Error: [_SB_.PCI0.RP09.PXSX] Namespace lookup failure, AE_NOT_FOUND (20170831/dswload2-191)
+ [    0.050002] ACPI Exception: AE_NOT_FOUND, During name lookup/catalog (20170831/psobject-252)
+ [    0.050365] ACPI Error: Method parse/execution failed \_SB.PCI0.RP08.PXSX, AE_NOT_FOUND (20170831/psparse-550)
+*** Invalid active0 threshold
+ [    2.390591] ACPI: Invalid active0 threshold
+
+*** ACPI logs
+
+#+BEGIN_EXAMPLE
+     260:Feb 11 13:07:14 fermi kernel: ACPI: Battery Slot [BAT0] (battery present)
+     261:Feb 11 13:07:14 fermi kernel: ACPI: AC Adapter [ADP0] (off-line)
+     271:Feb 11 13:07:14 fermi kernel: ACPI: Video Device [GFX0] (multi-head: yes  rom: no  post: no)
+     677:[    0.000000] BIOS-e820: [mem 0x000000008371b000-0x000000008371bfff] ACPI NVS
+     682:[    0.000000] BIOS-e820: [mem 0x000000008a7bf000-0x000000008ab5cfff] ACPI NVS
+     733:[    0.000000] ACPI: Early table checksum verification disabled
+     734:[    0.000000] ACPI: RSDP 0x00000000000F05B0 000024 (v02 ALASKA)
+     735:[    0.000000] ACPI: XSDT 0x000000008A7BF0B0 0000DC (v01 ALASKA A M I    01072009 AMI  00010013)
+     736:[    0.000000] ACPI: FACP 0x000000008A7E57C8 000114 (v06 ALASKA A M I    01072009 AMI  00010013)
+     737:[    0.000000] ACPI: DSDT 0x000000008A7BF220 0265A1 (v02 ALASKA A M I    01072009 INTL 20160422)
+     738:[    0.000000] ACPI: FACS 0x000000008AB5CF00 000040
+     739:[    0.000000] ACPI: APIC 0x000000008A7E58E0 0000BC (v03 ALASKA A M I    01072009 AMI  00010013)
+     740:[    0.000000] ACPI: FPDT 0x000000008A7E59A0 000044 (v01 ALASKA A M I    01072009 AMI  00010013)
+     741:[    0.000000] ACPI: FIDT 0x000000008A7E59E8 00009C (v01 ALASKA A M I    01072009 AMI  00010013)
+     742:[    0.000000] ACPI: MCFG 0x000000008A7E5A88 00003C (v01 ALASKA A M I    01072009 MSFT 00000097)
+     743:[    0.000000] ACPI: SSDT 0x000000008A7E5AC8 000359 (v01 SataRe SataTabl 00001000 INTL 20160422)
+     744:[    0.000000] ACPI: SSDT 0x000000008A7E5E28 00312F (v02 SaSsdt SaSsdt   00003000 INTL 20160422)
+     745:[    0.000000] ACPI: HPET 0x000000008A7E8F58 000038 (v01 INTEL  KBL-ULT  00000001 MSFT 0000005F)
+     746:[    0.000000] ACPI: SSDT 0x000000008A7E8F90 000AEE (v02 INTEL  Ther_Rvp 00001000 INTL 20160422)
+     747:[    0.000000] ACPI: SSDT 0x000000008A7E9A80 00072A (v02 INTEL  xh_kbl-r 00000000 INTL 20160422)
+     748:[    0.000000] ACPI: UEFI 0x000000008A7EA1B0 000042 (v01 ALASKA A M I    00000002      01000013)
+     749:[    0.000000] ACPI: SSDT 0x000000008A7EA1F8 0017AE (v02 CpuRef CpuSsdt  00003000 INTL 20160422)
+     750:[    0.000000] ACPI: LPIT 0x000000008A7EB9A8 000094 (v01 INTEL  KBL-ULT  00000000 MSFT 0000005F)
+     751:[    0.000000] ACPI: WDAT 0x000000008A7EBA40 000134 (v01 INTEL  KBL-ULT  00000000 MSFT 0000005F)
+     752:[    0.000000] ACPI: SSDT 0x000000008A7EBB78 000141 (v02 INTEL  HdaDsp   00000000 INTL 20160422)
+     753:[    0.000000] ACPI: SSDT 0x000000008A7EBCC0 00029F (v02 INTEL  sensrhub 00000000 INTL 20160422)
+     754:[    0.000000] ACPI: SSDT 0x000000008A7EBF60 003002 (v02 INTEL  PtidDevc 00001000 INTL 20160422)
+     755:[    0.000000] ACPI: SSDT 0x000000008A7EEF68 000517 (v02 INTEL  TbtTypeC 00000000 INTL 20160422)
+     756:[    0.000000] ACPI: DBGP 0x000000008A7EF480 000034 (v01 INTEL           00000002 MSFT 0000005F)
+     757:[    0.000000] ACPI: DBG2 0x000000008A7EF4B8 000054 (v00 INTEL           00000002 MSFT 0000005F)
+     758:[    0.000000] ACPI: DMAR 0x000000008A7EF510 0000A8 (v01 INTEL  KBL      00000001 INTL 00000001)
+     759:[    0.000000] ACPI: ASF! 0x000000008A7EF5B8 0000A0 (v32 INTEL   HCG     00000001 TFSM 000F4240)
+     760:[    0.000000] ACPI: WSMT 0x000000008A7EF658 000028 (v01 ALASKA A M I    01072009 AMI  00010013)
+     761:[    0.000000] ACPI: Local APIC address 0xfee00000
+     788:[    0.000000] ACPI: PM-Timer IO Port: 0x1808
+     789:[    0.000000] ACPI: Local APIC address 0xfee00000
+     790:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x01] high edge lint[0x1])
+     791:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x02] high edge lint[0x1])
+     792:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x03] high edge lint[0x1])
+     793:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x04] high edge lint[0x1])
+     794:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x05] high edge lint[0x1])
+     795:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x06] high edge lint[0x1])
+     796:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x07] high edge lint[0x1])
+     797:[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x08] high edge lint[0x1])
+     799:[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+     800:[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+     801:[    0.000000] ACPI: IRQ0 used by override.
+     802:[    0.000000] ACPI: IRQ9 used by override.
+     803:[    0.000000] Using ACPI (MADT) for SMP configuration information
+     804:[    0.000000] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+     854:[    0.000000] ACPI: Core revision 20170831
+     855:[    0.000000] ACPI: 10 ACPI AML tables successfully acquired and loaded
+     913:[    0.038188] PM: Registering ACPI NVS region [mem 0x8371b000-0x8371bfff] (4096 bytes)
+     914:[    0.038385] PM: Registering ACPI NVS region [mem 0x8a7bf000-0x8ab5cfff] (3792896 bytes)
+     922:[    0.041280] ACPI: bus type PCI registered
+     923:[    0.041482] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+     928:[    0.044101] ACPI: Added _OSI(Module Device)
+     929:[    0.044304] ACPI: Added _OSI(Processor Device)
+     930:[    0.044507] ACPI: Added _OSI(3.0 _SCP Extensions)
+     931:[    0.044712] ACPI: Added _OSI(Processor Aggregator Device)
+     932:[    0.048306] ACPI Error: [_SB_.PCI0.RP05.PXSX] Namespace lookup failure, AE_NOT_FOUND (20170831/dswload2-191)
+     933:[    0.048680] ACPI Exception: AE_NOT_FOUND, During name lookup/catalog (20170831/psobject-252)
+     934:[    0.049003] ACPI Error: Method parse/execution failed \_SB.PCI0.RP04.PXSX, AE_NOT_FOUND (20170831/psparse-550)
+     935:[    0.049750] ACPI Error: [_SB_.PCI0.RP09.PXSX] Namespace lookup failure, AE_NOT_FOUND (20170831/dswload2-191)
+     936:[    0.050002] ACPI Exception: AE_NOT_FOUND, During name lookup/catalog (20170831/psobject-252)
+     937:[    0.050365] ACPI Error: Method parse/execution failed \_SB.PCI0.RP08.PXSX, AE_NOT_FOUND (20170831/psparse-550)
+     938:[    0.052240] ACPI: Executed 47 blocks of module-level executable AML code
+     939:[    0.067352] ACPI: Dynamic OEM Table Load:
+     940:[    0.067564] ACPI: SSDT 0xFFFF9C188A491000 00058B (v02 PmRef  Cpu0Ist  00003000 INTL 20160422)
+     941:[    0.068124] ACPI: Executed 1 blocks of module-level executable AML code
+     942:[    0.068442] ACPI: \_PR_.PR00: _OSC native thermal LVT Acked
+     943:[    0.070306] ACPI: Dynamic OEM Table Load:
+     944:[    0.070515] ACPI: SSDT 0xFFFF9C188A48B800 0003FF (v02 PmRef  Cpu0Cst  00003001 INTL 20160422)
+     945:[    0.071049] ACPI: Executed 1 blocks of module-level executable AML code
+     946:[    0.071469] ACPI: Dynamic OEM Table Load:
+     947:[    0.071675] ACPI: SSDT 0xFFFF9C188A479E40 0000BA (v02 PmRef  Cpu0Hwp  00003000 INTL 20160422)
+     948:[    0.072137] ACPI: Executed 1 blocks of module-level executable AML code
+     949:[    0.072471] ACPI: Dynamic OEM Table Load:
+     950:[    0.072678] ACPI: SSDT 0xFFFF9C188A491800 000628 (v02 PmRef  HwpLvt   00003000 INTL 20160422)
+     951:[    0.073129] ACPI: Executed 1 blocks of module-level executable AML code
+     952:[    0.073865] ACPI: Dynamic OEM Table Load:
+     953:[    0.074010] ACPI: SSDT 0xFFFF9C188E0DA000 000D14 (v02 PmRef  ApIst    00003000 INTL 20160422)
+     954:[    0.075182] ACPI: Executed 1 blocks of module-level executable AML code
+     955:[    0.075599] ACPI: Dynamic OEM Table Load:
+     956:[    0.075807] ACPI: SSDT 0xFFFF9C188A48C000 000317 (v02 PmRef  ApHwp    00003000 INTL 20160422)
+     957:[    0.076209] ACPI: Executed 1 blocks of module-level executable AML code
+     958:[    0.076640] ACPI: Dynamic OEM Table Load:
+     959:[    0.076846] ACPI: SSDT 0xFFFF9C188A48C400 00030A (v02 PmRef  ApCst    00003000 INTL 20160422)
+     960:[    0.077210] ACPI: Executed 1 blocks of module-level executable AML code
+     961:[    0.081074] ACPI: EC: EC started
+     962:[    0.081274] ACPI: EC: interrupt blocked
+     963:[    0.081524] ACPI: \_SB_.PCI0.LPCB.EC0_: Used as first EC
+     964:[    0.081732] ACPI: \_SB_.PCI0.LPCB.EC0_: GPE=0x4f, EC_CMD/EC_SC=0x66, EC_DATA=0x62
+     965:[    0.082003] ACPI: \_SB_.PCI0.LPCB.EC0_: Used as boot DSDT EC to handle transactions
+     966:[    0.082362] ACPI: Interpreter enabled
+     967:[    0.082618] ACPI: (supports S0 S3 S4 S5)
+     968:[    0.082820] ACPI: Using IOAPIC for interrupt routing
+     969:[    0.083053] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+     970:[    0.084624] ACPI: Enabled 6 GPEs in block 00 to 7F
+     971:[    0.118591] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-fe])
+    1038:[    0.131960] ACPI: PCI Interrupt Link [LNKA] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1039:[    0.132061] ACPI: PCI Interrupt Link [LNKB] (IRQs 3 4 5 6 *10 11 12 14 15)
+    1040:[    0.132338] ACPI: PCI Interrupt Link [LNKC] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1041:[    0.132612] ACPI: PCI Interrupt Link [LNKD] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1042:[    0.132886] ACPI: PCI Interrupt Link [LNKE] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1043:[    0.133056] ACPI: PCI Interrupt Link [LNKF] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1044:[    0.133331] ACPI: PCI Interrupt Link [LNKG] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1045:[    0.133605] ACPI: PCI Interrupt Link [LNKH] (IRQs 3 4 5 6 10 *11 12 14 15)
+    1046:[    0.134272] ACPI: EC: interrupt unblocked
+    1047:[    0.134488] ACPI: EC: event unblocked
+    1048:[    0.134721] ACPI: \_SB_.PCI0.LPCB.EC0_: GPE=0x4f, EC_CMD/EC_SC=0x66, EC_DATA=0x62
+    1049:[    0.135029] ACPI: \_SB_.PCI0.LPCB.EC0_: Used as boot DSDT EC to handle transactions and events
+    1054:[    0.136450] PCI: Using ACPI for IRQ routing
+    1072:[    0.178613] pnp: PnP ACPI init
+    1079:[    0.180411] system 00:00: Plug and Play ACPI device, IDs PNP0c02 (active)
+    1080:[    0.180545] pnp 00:01: Plug and Play ACPI device, IDs PNP0b00 (active)
+    1082:[    0.180803] system 00:02: Plug and Play ACPI device, IDs INT3f0d PNP0c02 (active)
+    1093:[    0.183560] system 00:03: Plug and Play ACPI device, IDs PNP0c02 (active)
+    1101:[    0.185159] system 00:04: Plug and Play ACPI device, IDs PNP0c02 (active)
+    1103:[    0.185768] system 00:05: Plug and Play ACPI device, IDs PNP0c02 (active)
+    1109:[    0.188395] system 00:06: Plug and Play ACPI device, IDs PNP0c02 (active)
+    1110:[    0.189185] pnp 00:07: Plug and Play ACPI device, IDs IBM3780 PNP0f13 (active)
+    1111:[    0.189207] pnp 00:08: Plug and Play ACPI device, IDs PNP0303 (active)
+    1112:[    0.189576] pnp: PnP ACPI: found 9 devices
+    1216:[    0.737850] ACPI: bus type USB registered
+    1314:[    2.374673] ACPI: Lid Switch [LID0]
+    1316:[    2.375252] ACPI: Sleep Button [SLPB]
+    1318:[    2.375770] ACPI: Power Button [PWRB]
+    1320:[    2.376941] ACPI: Power Button [PWRF]
+    1321:[    2.390591] ACPI: Invalid active0 threshold
+    1324:[    2.391669] ACPI: Thermal Zone [TZ00] (41 C)
+    1326:[    2.394594] ACPI: Thermal Zone [TZ01] (41 C)
+    1350:[    2.515718] ACPI: Battery Slot [BAT0] (battery present)
+    1351:[    2.516125] ACPI: AC Adapter [ADP0] (off-line)
+    1361:[    2.566057] ACPI: Video Device [GFX0] (multi-head: yes  rom: no  post: no)
+#+END_EXAMPLE
+
+*** Notes
+ - [[https://blog.fpmurphy.com/2014/12/decompiling-acpi-tables.html][Decompiling ACPI Tables]]
+ - [[https://wiki.ubuntu.com/Kernel/Reference/ACPITricksAndTips][ACPI Tips and Tricks]]
+ - [[https://www.kernel.org/doc/Documentation/acpi/debug.txt][Kernel: ACPI Debug Output]]
+ - /sys/firmware/acpi/tables: DSDT
+
+** NULL devices
+
+ [    2.390965] (NULL device *): hwmon_device_register() is deprecated. Please convert the driver to use hwmon_device_register_with_info().
+
+** USB PM
+ [    0.762662] usb: port power management may be unreliable
+
+*** USB logs
+
+#+BEGIN_EXAMPLE
+     368:Feb 11 13:07:19 fermi kernel: usb 1-8: new full-speed USB device number 5 using xhci_hcd
+     369:Feb 11 13:07:19 fermi kernel: usb 1-8: New USB device found, idVendor=8087, idProduct=07dc
+     370:Feb 11 13:07:19 fermi kernel: usb 1-8: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+     377:Feb 11 13:07:19 fermi kernel: input: Integrated Camera: Integrated C as /devices/pci0000:00/0000:00:14.0/usb1/1-7/1-7:1.0/input/input26
+     378:Feb 11 13:07:19 fermi kernel: usbcore: registered new interface driver uvcvideo
+     379:Feb 11 13:07:19 fermi kernel: USB Video Class driver (1.1.1)
+     386:Feb 11 13:07:19 fermi kernel: usbcore: registered new interface driver btusb
+    1216:[    0.737850] ACPI: bus type USB registered
+    1217:[    0.738216] usbcore: registered new interface driver usbfs
+    1218:[    0.738561] usbcore: registered new interface driver hub
+    1219:[    0.738915] usbcore: registered new device driver usb
+    1229:[    0.751734] xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus number 1
+    1232:[    0.753624] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002
+    1233:[    0.753811] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+    1234:[    0.754180] usb usb1: Product: xHCI Host Controller
+    1235:[    0.754367] usb usb1: Manufacturer: Linux 4.15.2 xhci-hcd
+    1236:[    0.754548] usb usb1: SerialNumber: 0000:00:14.0
+    1237:[    0.754863] hub 1-0:1.0: USB hub found
+    1240:[    0.756189] xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus number 2
+    1241:[    0.756523] usb usb2: New USB device found, idVendor=1d6b, idProduct=0003
+    1242:[    0.756709] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+    1243:[    0.757058] usb usb2: Product: xHCI Host Controller
+    1244:[    0.757245] usb usb2: Manufacturer: Linux 4.15.2 xhci-hcd
+    1246:[    0.761615] usb usb2: SerialNumber: 0000:00:14.0
+    1247:[    0.761934] hub 2-0:1.0: USB hub found
+    1249:[    0.762662] usb: port power management may be unreliable
+    1254:[    1.081210] usb 1-3: new full-speed USB device number 2 using xhci_hcd
+    1255:[    1.208374] usb 1-3: New USB device found, idVendor=147e, idProduct=2016
+    1256:[    1.208563] usb 1-3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+    1257:[    1.208750] usb 1-3: Product: Biometric Coprocessor
+    1258:[    1.208929] usb 1-3: Manufacturer: UPEK
+    1259:[    1.323211] usb 1-6: new full-speed USB device number 3 using xhci_hcd
+    1261:[    1.451731] usb 1-6: New USB device found, idVendor=1050, idProduct=0407
+    1262:[    1.451919] usb 1-6: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+    1263:[    1.452112] usb 1-6: Product: Yubikey 4 OTP+U2F+CCID
+    1264:[    1.452291] usb 1-6: Manufacturer: Yubico
+    1266:[    1.460275] usbcore: registered new interface driver usbhid
+    1267:[    1.460458] usbhid: USB HID core driver
+    1268:[    1.461103] input: Yubico Yubikey 4 OTP+U2F+CCID as /devices/pci0000:00/0000:00:14.0/usb1/1-6/1-6:1.0/0003:1050:0407.0001/input/input4
+    1269:[    1.513116] hid-generic 0003:1050:0407.0001: input,hidraw0: USB HID v1.10 Keyboard [Yubico Yubikey 4 OTP+U2F+CCID] on usb-0000:00:14.0-6/input0
+    1270:[    1.513535] hid-generic 0003:1050:0407.0002: hiddev96,hidraw1: USB HID v1.10 Device [Yubico Yubikey 4 OTP+U2F+CCID] on usb-0000:00:14.0-6/input1
+    1271:[    1.567192] usb 1-7: new high-speed USB device number 4 using xhci_hcd
+    1272:[    1.699214] usb 1-7: New USB device found, idVendor=17ef, idProduct=4816
+    1273:[    1.699403] usb 1-7: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+    1274:[    1.699590] usb 1-7: Product: Integrated Camera
+    1275:[    1.699768] usb 1-7: Manufacturer: Chicony Electronics Co., Ltd.
+    1396:[    7.250196] usb 1-8: new full-speed USB device number 5 using xhci_hcd
+    1397:[    7.377835] usb 1-8: New USB device found, idVendor=8087, idProduct=07dc
+    1398:[    7.377857] usb 1-8: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+    1405:[    7.401186] input: Integrated Camera: Integrated C as /devices/pci0000:00/0000:00:14.0/usb1/1-7/1-7:1.0/input/input26
+    1406:[    7.401288] usbcore: registered new interface driver uvcvideo
+    1407:[    7.401314] USB Video Class driver (1.1.1)
+    1414:[    7.407855] usbcore: registered new interface driver btusb
+#+END_EXAMPLE
+
+** Webcam
+
+#+BEGIN_EXAMPLE
+ [    7.400987] uvcvideo 1-7:1.0: Entity type for entity Extension 3 was not initialized!
+ [    7.401039] uvcvideo 1-7:1.0: Entity type for entity Processing 2 was not initialized!
+ [    7.401077] uvcvideo 1-7:1.0: Entity type for entity Camera 1 was not initialized!
+#+END_EXAMPLE
+
+** NVME issue
+
+#+BEGIN_EXAMPLE
+ [    0.943518] nvme nvme0: missing or invalid SUBNQN field.
+ [    0.946693]  nvme0n1:
+#+END_EXAMPLE
+
+** Platform
+#+BEGIN_EXAMPLE
+ [    2.479620] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+#+END_EXAMPLE
