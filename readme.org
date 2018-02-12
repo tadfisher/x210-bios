@@ -13,6 +13,7 @@ installed in an original X200 or X201 chassis. More information can be found at:
 * This repo
 
 | ~fwts~ | Dumps and other info provided by the [[https://wiki.ubuntu.com/FirmwareTestSuite][Firmware Test Suite]] |
+| ~aml~  | Disassembled DSDT and SSDT tables                        |
 
 * Issues
 
