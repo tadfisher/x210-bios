@@ -313,15 +313,19 @@ installed in an original X200 or X201 chassis. More information can be found at:
 	Kernel modules: nvme
 #+END_EXAMPLE
 
-** Platform
-#+BEGIN_EXAMPLE
- [    2.479620] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
-#+END_EXAMPLE
-
 ** SATA controller does not resume after suspend
 
 #+BEGIN_EXAMPLE
 [ 1989.923809] ahci 0000:00:17.0: controller reset failed (0x80000001)
 [ 1989.923813] dpm_run_callback(): pci_pm_resume+0x0/0xa0 returns -5
 [ 1989.923820] PM: Device 0000:00:17.0 failed to resume async: error -5
+#+END_EXAMPLE
+
+* Additional info
+
+** EC ports
+#+BEGIN_EXAMPLE
+$ cat /proc/ioports | grep EC
+    0062-0062 : EC data
+    0066-0066 : EC cmd
 #+END_EXAMPLE
